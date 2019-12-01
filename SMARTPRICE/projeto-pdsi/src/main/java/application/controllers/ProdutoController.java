@@ -1,6 +1,5 @@
-package controller;
+package application.controllers;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,67 +14,64 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import constantes.FlagStatusProduto;
-import filter.ProdutoFilter;
-import model.Produto;
-import service.ProdutoService;
+import application.filters.ProdutoFilter;
+import application.models.Produto;
+import application.services.ProdutoService;
 
 @Controller
 @RequestMapping("produtos")
 public class ProdutoController {
 	
-	private static final String CADASTRO_VIEW = "CadastroProduto";
+	private static final String CADASTRO_VIEW = "produtos/cadastroProduto";
+	private static final String PESQUISA_VIEW = "produtos/pesquisaProduto";
 
 	@Autowired
 	private ProdutoService produtoService;
-	
-	@RequestMapping("/novaTela")
-	public String novaTela() {
-		return "CadastroProduto";
+
+	@RequestMapping
+	public ModelAndView pesquisar(@ModelAttribute("filtro") ProdutoFilter filtro) {
+		List<Produto> produtos = produtoService.filtrar(filtro);
+		
+		ModelAndView mv = new ModelAndView(PESQUISA_VIEW);
+		mv.addObject("produtos", produtos);
+		return mv;
 	}
 	
-	@RequestMapping("/novo")
-	public ModelAndView novo() {
+	@RequestMapping("/cadastro")
+	public ModelAndView cadastrar() {
 		ModelAndView mv = new ModelAndView(CADASTRO_VIEW);
 		mv.addObject(new Produto());
 		return mv;
 	}
 	
-	@RequestMapping(method= RequestMethod.POST)
+	@RequestMapping(value = "/inserir", method = RequestMethod.POST)
 	public String salvar(@Validated Produto produto, Errors errors, RedirectAttributes attributes) {
 		if (errors.hasErrors()) {
+			attributes.addFlashAttribute("mensagem", "Erro ao salvar o produto!");
 			return CADASTRO_VIEW;
 		}
 		
 		try {
 			produtoService.salvar(produto);
 			attributes.addFlashAttribute("mensagem", "Produto salvo com sucesso!");
-			return "redirect:/produtos/novo";
-		} catch (IllegalArgumentException e) {
+			return "redirect:/produtos";
+		}
+		catch (IllegalArgumentException e) {
 			errors.rejectValue("dataVencimento", null, e.getMessage());
 			return CADASTRO_VIEW;
 		}
 	}
-	@RequestMapping
-	public ModelAndView pesquisar(@ModelAttribute("filtro") ProdutoFilter filtro) {
-		List<Produto> todosProdutos = produtoService.filtrar(filtro);
-		
-		ModelAndView mv = new ModelAndView("PesquisaProdutos");
-		mv.addObject("produtos", todosProdutos);
-		return mv;
-	}
 	
 	@RequestMapping("{codigo}")
-	public ModelAndView edicao(@PathVariable("codigo") Produto produto) {
+	public ModelAndView editar(@PathVariable("codigo") Produto produto) {
 		ModelAndView mv = new ModelAndView(CADASTRO_VIEW); 
 		mv.addObject(produto);
 		return mv;
 	}
 	
-	@RequestMapping(value="{codigo}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "{codigo}/excluir")
 	public String excluir(@PathVariable Long codigo, RedirectAttributes attributes) {
 		produtoService.excluir(codigo);
-		
 		attributes.addFlashAttribute("mensagem", "Produto excluído com sucesso!");
 		return "redirect:/produtos";
 	}
@@ -84,11 +80,5 @@ public class ProdutoController {
 	public @ResponseBody String receber(@PathVariable Long codigo) {
 		return produtoService.receber(codigo);
 	}
-	
-	@ModelAttribute("todosStatusProduto")
-	public List<FlagStatusProduto> todosStatusProduto() {
-		return Arrays.asList(FlagStatusProduto.values());
-	}
-	
-	
+
 }

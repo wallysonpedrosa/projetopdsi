@@ -1,7 +1,7 @@
-package filter;
+package application.filters;
 
 public class ProdutoFilter {
-	
+
 	private String descricao;
 
 	public String getDescricao() {
