@@ -32,7 +32,7 @@ public class ProdutoService {
 	}
 
 	public String receber(Long codigo) {
-		Produto produto = produtos.findByCodigo(codigo);
+		Produto produto = produtos.findById(codigo).get();
 		produto.setStatus(FlagStatusProduto.RESERVADO);
 		produtos.save(produto);
 
@@ -42,7 +42,7 @@ public class ProdutoService {
 	public List<Produto> filtrar(ProdutoFilter filtro) {
 		List<Produto> result = new ArrayList<Produto>();
 		
-		if(filtro == null || filtro.getDescricao() == null) {
+		if(filtro == null || filtro.getDescricao() == null || filtro.getDescricao().isEmpty()) {
 			Iterator<Produto> i = produtos.findAll().iterator();
 			
 			while(i.hasNext()) {
@@ -50,8 +50,7 @@ public class ProdutoService {
 			}
 		}
 		else {
-			String descricao = "%" + filtro.getDescricao() + "%";
-			result = produtos.findByDescricaoContaining(descricao);
+			result = produtos.findByDescricaoContainingIgnoreCase(filtro.getDescricao());
 		}
 		
 		return result;

@@ -12,8 +12,6 @@ import application.models.Produto;
 @Transactional
 public interface ProdutoRepository extends CrudRepository<Produto, Long> {
 
-	public List<Produto> findByDescricaoContaining(String descricao);
-
-	public Produto findByCodigo(Long codigo);
+	public List<Produto> findByDescricaoContainingIgnoreCase(String descricao);
 
 }

@@ -13,7 +13,7 @@
 </head>
 
 <section layout:fragment="conteudo">
-	<div class="container">
+	<div class="container bg-light">
 	    <form class="form-horizontal" method="POST" th:action="@{/produtos/inserir}" th:object="${produto}">
 	    	<div layout:include="MensagemGeral"></div>
 	    	<div layout:include="MensagemErro"></div>
@@ -22,46 +22,48 @@
 	    		<div class="panel-heading">
 	    			<div class="clearfix">
 		   				<h1 class="panel-title aw-titulo-panel">Novo Produto</h1>
-		   				<a class="btn btn-link aw-link-panel" th:href="@{/produtos}">Voltar para pesquisa</a>
+		   				<a class="btn btn-link aw-link-panel" th:href="@{/produtos}">Pesquisar produtos</a>
 		   			</div>
+		   			<br>
 	    		</div>
 	    		
 	    		<div class="panel-body">
 	    			<input type="hidden" th:field="*{codigo}"/>
 	    		
-					<div class="form-group" th:classappend="${#fields.hasErrors('descricao')} ? has-error">
-						<label for="descricao" class="col-sm-2 control-label">Descrição</label>
-						<div class="col-sm-4"> 
+					<div class="row form-group" th:classappend="${#fields.hasErrors('descricao')} ? has-error">
+						<label for="descricao" class="col-2 control-label">Descrição</label>
+						<div class="col-6"> 
 							<input type="text" class="form-control" id="descricao" th:field="*{descricao}"/>
 						</div>
 					</div>
-					<div class="form-group" th:classappend="${#fields.hasErrors('dataVencimento')} ? has-error">
-						<label for="dataVencimento" class="col-sm-2 control-label">Data de vencimento</label>
-						<div class="col-sm-2">  
+					<div class="row form-group" th:classappend="${#fields.hasErrors('dataVencimento')} ? has-error">
+						<label for="dataVencimento" class="col-2 control-label">Data de vencimento</label>
+						<div class="col-3">  
 							<input type="date" class="form-control"	id="dataVencimento" th:field="*{dataVencimento}"
 								data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-language="pt-BR"
 								data-date-autoclose="true" data-date-today-highlight="true" data-date-orientation="bottom"/>
 						</div>
 					</div>
-					<div class="form-group" th:classappend="${#fields.hasErrors('valor')} ? has-error">
-						<label for="valor" class="col-sm-2 control-label">Valor</label>
-						<div class="col-sm-2">   
+					<div class="row form-group" th:classappend="${#fields.hasErrors('valor')} ? has-error">
+						<label for="valor" class="col-2 control-label">Valor</label>
+						<div class="col-3">   
 							<input type="text" class="form-control js-currency" id="valor" th:field="*{valor}"/>
 						</div>
 					</div>
-					<div class="form-group">
-						<label for="status" class="col-sm-2 control-label">Status</label>
-						<div class="col-sm-2">
+					<div class="row form-group">
+						<label for="status" class="col-2 control-label">Status</label>
+						<div class="col-3">
 							<select class="form-control" name="status" th:field="*{status}">
 								<option th:each="status : ${T(application.enums.FlagStatusProduto).values()}" th:value="${status}" th:text="${status.label}"></option>
 	                    	</select>
 	                    </div>
 					</div>
-					<div class="form-group">
-						<div class="col-sm-offset-2 col-sm-10">
+					<div class="row form-group">
+						<div class="offset-2 col-1">
 							<button type="submit" class="btn btn-primary">Salvar</button>
 						</div>
 					</div>
+					<br>
 				</div>
 	    	</div>
 	    </form>
